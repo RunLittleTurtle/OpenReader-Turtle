@@ -14,6 +14,8 @@ jobs:
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     env:
       FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
     steps:
@@ -22,6 +24,13 @@ jobs:
 
       - name: Setup flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Validate Fly token
+        run: |
+          if [ -z "$FLY_API_TOKEN" ]; then
+            echo "Missing GitHub secret: FLY_API_TOKEN"
+            exit 1
+          fi
 
       - name: Deploy
         run: flyctl deploy --app openreader-turtle --remote-only --strategy rolling --now
