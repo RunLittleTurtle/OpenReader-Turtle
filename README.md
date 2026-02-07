@@ -258,6 +258,39 @@ Optionally required for different features:
 
    Visit [http://localhost:3003](http://localhost:3003) to run the app.
 
+## 🚀 Fly.io: Persistent storage + password protection
+
+If you deploy on Fly.io and want your files to survive across sessions/redeploys:
+
+1. Create a volume (use the same region as `primary_region` in `fly.toml`):
+   ```bash
+   fly volumes create docstore --region ams --size 10 --app openreader-turtle
+   ```
+
+2. Deploy with the included `fly.toml` mount:
+   - `docstore` is mounted to `/app/docstore`
+   - This persists server-side documents, audiobook exports, and migration state.
+
+3. (Recommended for single-user public apps) set Basic Auth credentials:
+   ```bash
+   fly secrets set BASIC_AUTH_USER=your_user BASIC_AUTH_PASSWORD='your_strong_password' --app openreader-turtle
+   ```
+   The app now includes optional HTTP Basic Auth middleware. If either secret is missing, auth is disabled.
+
+4. Deploy:
+   ```bash
+   fly deploy
+   ```
+
+5. In the app, use **Settings → Documents → Save to server** to sync browser documents to persistent server storage.
+
+Useful checks:
+```bash
+fly volumes list --app openreader-turtle
+fly status --app openreader-turtle
+curl -i https://<your-app>.fly.dev/api/health
+```
+
 
 ## 💡 Feature requests
 

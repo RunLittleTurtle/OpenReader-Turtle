@@ -8,6 +8,15 @@ primary_region = 'ams'
 
 [build]
 
+[env]
+  # Enables self-hosted features in the UI (server sync, DOCX conversion, etc.).
+  NEXT_PUBLIC_NODE_ENV = 'development'
+
+[[mounts]]
+  # Persist OpenReader server storage across machine restarts/redeploys.
+  source = 'docstore'
+  destination = '/app/docstore'
+
 [http_service]
   internal_port = 3003
   force_https = true
